@@ -105,6 +105,9 @@ def train():
     # Setup optimizer. SGD with lr=0.1 will work
     optimizer = torch.optim.Adam(params=model.parameters(), lr=0.1)
 
+    best_val_loss = float('inf')
+    patience = 5
+    counter = 0
     train_losses, test_losses = [], []
     for epoch in range(N_EPOCHS):
 
@@ -123,6 +126,29 @@ def train():
         print(f'\tLoss: {train_loss:.4f}(train)')
         print(f'\tLoss: {test_loss:.4f}(test)')
 
+        if test_loss < best_val_loss:
+            best_val_loss = test_loss
+            counter = 0
+            print(f"Saving checkpoint to {checkpoint_path}...")
+            # We can save everything we will need later in the checkpoint.
+            # Here, we could save a feature transformer if we had used one
+            checkpoint = {
+                "model_state_dict": model.state_dict(),
+                "optimizer_state_dict": optimizer.state_dict(),
+                "input_size": input_size,
+                "hidden_size": HIDDEN_SIZE,
+                "x_mean": x_mean,
+                "y_mean": y_mean,
+                "x_std": x_std,
+                "y_std": y_std,
+            }
+            torch.save(checkpoint, checkpoint_path)
+        else:
+            counter += 1
+            if counter >= patience:
+                print("Early stopping")
+                break
+
     losses_len = range(len(train_losses))
 
     plt.figure()
@@ -134,20 +160,20 @@ def train():
 
     # Now save the artifacts of the training
     # Do not change this path (unless debugging). You should mount a Docker volume to it
-    print(f"Saving checkpoint to {checkpoint_path}...")
-    # We can save everything we will need later in the checkpoint.
-    # Here, we could save a feature transformer if we had used one
-    checkpoint = {
-        "model_state_dict": model.state_dict(),
-        "optimizer_state_dict": optimizer.state_dict(),
-        "input_size": input_size,
-        "hidden_size": HIDDEN_SIZE,
-        "x_mean": x_mean,
-        "y_mean": y_mean,
-        "x_std": x_std,
-        "y_std": y_std,
-    }
-    torch.save(checkpoint, checkpoint_path)
+    # print(f"Saving checkpoint to {checkpoint_path}...")
+    # # We can save everything we will need later in the checkpoint.
+    # # Here, we could save a feature transformer if we had used one
+    # checkpoint = {
+    #     "model_state_dict": model.state_dict(),
+    #     "optimizer_state_dict": optimizer.state_dict(),
+    #     "input_size": input_size,
+    #     "hidden_size": HIDDEN_SIZE,
+    #     "x_mean": x_mean,
+    #     "y_mean": y_mean,
+    #     "x_std": x_std,
+    #     "y_std": y_std,
+    # }
+    # torch.save(checkpoint, checkpoint_path)
 
 if __name__ == "__main__":
     train()
