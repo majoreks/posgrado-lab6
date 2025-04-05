@@ -134,21 +134,21 @@ def train():
 
     # Now save the artifacts of the training
     # Do not change this path (unless debugging). You should mount a Docker volume to it
-    savedir = "/checkpoints/checkpoint.pt"
+    savedir = "./output/checkpoints/checkpoint.pt"
     print(f"Saving checkpoint to {savedir}...")
     # We can save everything we will need later in the checkpoint.
     # Here, we could save a feature transformer if we had used one
     checkpoint = {
-        "model_state_dict": ...,
-        "optimizer_state_dict": ...,
-        "input_size": ...,
-        "hidden_size": ...,
-        "x_mean": ...,
-        "y_mean": ...,
-        "x_std": ...,
-        "y_std": ...,
+        "model_state_dict": model.state_dict(),
+        "optimizer_state_dict": optimizer.state_dict(),
+        "input_size": input_size,
+        "hidden_size": HIDDEN_SIZE,
+        "x_mean": x_mean,
+        "y_mean": y_mean,
+        "x_std": x_std,
+        "y_std": y_std,
     }
-    torch.save(...)
+    torch.save(checkpoint, savedir)
 
 if __name__ == "__main__":
     train()
