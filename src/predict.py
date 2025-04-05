@@ -24,7 +24,7 @@ def predict(input_features: List[float]):
     model.eval()
 
     # Input features is a list of floats. We have to convert it to tensor of the correct shape
-    x = torch.tensor(input_features).unsqueeze(0)
+    x = torch.tensor(input_features, dtype=torch.float32).unsqueeze(0)
 
     # Now we have to do the same normalization we did when training:
     x = (x - x_mean) / x_std
