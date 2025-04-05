@@ -1,4 +1,3 @@
-import os
 import time
 
 import pandas as pd
@@ -8,6 +7,7 @@ from sklearn.model_selection import train_test_split
 from matplotlib import pyplot as plt
 
 from model import RegressionModel
+from dirs import checkpoint_path
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -134,8 +134,7 @@ def train():
 
     # Now save the artifacts of the training
     # Do not change this path (unless debugging). You should mount a Docker volume to it
-    savedir = "./output/checkpoints/checkpoint.pt"
-    print(f"Saving checkpoint to {savedir}...")
+    print(f"Saving checkpoint to {checkpoint_path}...")
     # We can save everything we will need later in the checkpoint.
     # Here, we could save a feature transformer if we had used one
     checkpoint = {
@@ -148,7 +147,7 @@ def train():
         "x_std": x_std,
         "y_std": y_std,
     }
-    torch.save(checkpoint, savedir)
+    torch.save(checkpoint, checkpoint_path)
 
 if __name__ == "__main__":
     train()
