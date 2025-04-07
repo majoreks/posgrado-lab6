@@ -1,17 +1,21 @@
 # set base image (host OS)
-FROM ...
+FROM python:3.10
 
 # set the working directory in the container
-WORKDIR ...
+WORKDIR /app
 
 # copy the dependencies file to the working directory
-COPY ...
+COPY requirements.txt .
 
 # install dependencies
-RUN ...
+RUN pip install -r requirements.txt
 
 # Copy code to the working directory
-COPY ...
+RUN mkdir src
+RUN mkdir output
+RUN mkdir data
+COPY src/* src/
+COPY data/* data/
 
 # command to run on container start
-ENTRYPOINT ...
+ENTRYPOINT ["python", "./src/entrypoint.py"]
